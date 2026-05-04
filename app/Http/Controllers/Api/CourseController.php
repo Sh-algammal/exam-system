@@ -42,6 +42,7 @@ class CourseController extends Controller
             }, $headers);
             
             $importedCount = 0;
+            $coursesToInsert = [];
 
             foreach ($rows as $row) {
                 // دمج رأس الجدول مع القيم
@@ -52,7 +53,7 @@ class CourseController extends Controller
                     continue; 
                 }
 
-                Course::create([
+                $coursesToInsert[] = [
                     'section_id' => $rowData['section_id'] ?? null,
                     'course_name' => $rowData['course_name'] ?? null,
                     'course_code' => $rowData['course_code'] ?? null,
@@ -61,8 +62,16 @@ class CourseController extends Controller
                     'date' => !empty($rowData['date']) ? date('Y-m-d', strtotime($rowData['date'])) : null,
                     'doctor' => $rowData['doctor'] ?? null,
                     'location' => $rowData['location'] ?? null,
-                ]);
+                    'created_at' => now(), // من المهم إضافتها في الـ insert العادي
+                    'updated_at' => now(), // من المهم إضافتها في الـ insert العادي
+                ];
                 $importedCount++;
+            }
+            
+            // نقسّم الإدخال إلى حزم (مثلا 500 كورس في المرة الواحدة) كنوع من الأمان
+            $chunks = array_chunk($coursesToInsert, 500);
+            foreach ($chunks as $chunk) {
+                Course::insert($chunk); // الإدخال الجماعي - أسرع بمراحل!
             }
             
             return response()->json([
