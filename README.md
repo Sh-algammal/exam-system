@@ -1,59 +1,97 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎓 Faculty of Science - Exam Schedule System (API)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
-## About Laravel
+A scalable RESTful API built with **Laravel 12** to manage and display university exam schedules. The system allows regular users to view schedules and enables administrators to seamlessly manage data (Sections, Levels, Laihas, and Courses) with support for **High-Performance Bulk Excel Data Imports**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Role-Based Authentication**: Secure login mechanism using `Laravel Sanctum` (Admin & User).
+- **Public & Protected Endpoints**: 
+  - Students/Users can browse sections, levels, laihas, and courses.
+  - Admins have exclusive access to CRUD operations for system management.
+- **Lightning Fast Excel Imports**: Upload thousands of courses at once! Implemented **Bulk Insert & Chunking** strategies to prevent server timeouts and memory exhaustion.
+- **Cloud Ready**: Configured for seamless deployment on `Laravel Cloud` using Serverless PostgreSQL.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🛠️ Database Structure (Main Entities)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Users**: Can be 'admin' or 'user'.
+- **Sections (الأقسام)**: Departments within the faculty.
+- **Levels (المستويات)**: Academic levels/years.
+- **Laihas (اللوائح)**: Academic regulations systems.
+- **Courses (المواد)**: Contains course name, code, exam day, date, doctor name, and location, linked to a section.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🚀 API Endpoints Overview
 
-### Premium Partners
+### 🔐 Authentication
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| POST | `/api/login` | Login and receive Sanctum Token | Public |
+| POST | `/api/register` | Register a new user | Public |
+| DELETE | `/api/logout` | Logout & revoke Token | Auth |
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 📖 Public Endpoints (Read-Only)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/api/sections` | Get all sections | Public |
+| GET | `/api/courses` | Get all courses (Schedules) | Public |
+| GET | `/api/levels` | Get all levels | Public |
+| GET | `/api/laihas` | Get all laihas | Public |
 
-## Contributing
+### 🛡️ Admin Endpoints (Protected)
+*Requires `Authorization: Bearer {token}` header.*
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| POST | `/api/sections` | Create a new section | Admin |
+| POST | `/api/courses` | Create a new course | Admin |
+| POST | `/api/courses/import` | Upload `.xlsx` or `.csv` to bulk insert courses | Admin |
+| DELETE | `/api/courses/{id}`| Delete a specific course | Admin |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+*(Standard GET/POST/PUT/DELETE are supported for all main entities via API resources).*
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 💻 Local Setup & Installation
 
-## Security Vulnerabilities
+If you want to run this project on your local machine:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/YourUsername/exam-system.git
+   cd exam-system
+   ```
+2. **Install Composer Dependencies:**
+    ```bash
+    composer install
+    ```
+3. **Configure Environment Options:**
+    ```bash
+    cp .env.example .env
+    php artisan key:generate
+    ```
+    *Make sure to update your `.env` file with your local MySQL database credentials.*
+4. **Run Migrations & Seeders:**
+    ```bash
+    php artisan migrate --seed
+    ```
+5. **Start the Local Development Server:**
+    ```bash
+    php artisan serve
+    ```
+## ☁️ Deployment
 
-## License
+This project is deployed on Laravel Cloud.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Live API URL:** ``https://faculty-of-science-final-exam.free.laravel.cloud``
+- **Database:** Laravel Serverless Postgres.
+- **Changes** pushed to the `main` branch on GitHub automatically trigger a seamless deployment.
+---
+*Developed for the Faculty of Science to streamline the final exams scheduling process.*
